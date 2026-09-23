@@ -1,0 +1,3 @@
+import { ExternalLink, X } from 'lucide-react'
+import type { Project } from '../../data/projects'
+export function ProjectModal({ project, onClose }: { project: Project; onClose: () => void }) { return <div className="modal" role="dialog" aria-modal="true" aria-label={`${project.title} project`}><button className="close" onClick={onClose}><X/> CLOSE</button><div className="modal-album" style={{background: project.color}}>{project.art}</div><div className="modal-copy"><p className="eyebrow">{project.type}</p><h2>{project.title}</h2><p>{project.desc}</p><div>{project.tags.map(x => <span className="tag" key={x}>{x}</span>)}</div><a href="#" className="project-link">View project <ExternalLink size={16}/></a></div></div> }
