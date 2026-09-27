@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { ProjectDetail } from '../components/ProjectDetail';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 interface DriveFile {
   id: string;
@@ -22,6 +23,7 @@ export default function Home() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useScrollAnimation();
 
   useEffect(() => {
     async function loadProjects() {
@@ -50,7 +52,7 @@ export default function Home() {
   }
 
   return (
-    <main>
+    <main ref={scrollRef}>
       <Header />
 
       {/* Hero */}
