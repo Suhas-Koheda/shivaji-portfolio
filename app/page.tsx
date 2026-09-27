@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
-import { ProjectCard } from '../components/ProjectCard';
 import { ProjectDetail } from '../components/ProjectDetail';
-import { StampSeal } from '../components/StampSeal';
 
 interface DriveFile {
   id: string;
@@ -55,69 +53,95 @@ export default function Home() {
     <main>
       <Header />
 
-      {/* Hero Banner */}
-      <section className="display-banner">
-        <h1>SHIVAJI</h1>
-        <p>Selected Works · {new Date().getFullYear()}</p>
-      </section>
-
-      {/* Bio Section */}
-      <section className="page-wrapper">
-        <div className="bio-section">
-          <div>
-            <p className="bio-text">
-              <span className="bio-dropcap">I</span>&apos;m an engineer designing intelligent products and curious interfaces. My work lives at the intersection of systems thinking and creative exploration — building things that feel both inevitable and surprising.
-            </p>
-            <p className="bio-text" style={{ marginTop: '20px' }}>
-              Currently exploring the space between AI and human creativity, always looking for the next interesting problem to solve.
-            </p>
-          </div>
-          <div>
-            <h2 className="bio-heading">
-              Creative Developer<br />Based in Hyderabad, India.
-            </h2>
-            <div style={{ marginTop: '24px' }}>
-              <StampSeal />
-            </div>
-          </div>
+      {/* Hero */}
+      <section className="hero">
+        <h1 className="hero-wordmark">FLIM</h1>
+        <div className="hero-tagline">
+          <h2>Creative Developer<br />& Designer</h2>
+          <p>Building digital experiences that feel inevitable and surprising. Based in Hyderabad, India.</p>
         </div>
       </section>
 
+      {/* Search Bar */}
+      <div className="page-wrapper">
+        <div className="search-bar">
+          <input type="text" placeholder="Search anything" />
+          <button>Search ⌘/</button>
+        </div>
+      </div>
+
       {/* Work Section */}
-      <section className="page-wrapper" id="work">
-        <div style={{ textAlign: 'center', marginBottom: '43px' }}>
-          <h2 className="heading-lg">ALL WORK!</h2>
-          <p className="subheading" style={{ marginTop: '14px' }}>
-            A collection of projects, experiments, and collaborations.
-          </p>
+      <section className="page-wrapper">
+        <div className="project-nav">
+          <a href="#work" className="project-nav-link active">All Work</a>
+          {projects.map(p => (
+            <a key={p.id} href={`#${p.id}`} className="project-nav-link">{p.name}</a>
+          ))}
         </div>
 
         {loading ? (
-          <div className="project-grid">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="loading-skeleton" style={{ height: '300px' }} />
-            ))}
+          <div className="loading-container">
+            <div className="loading-progress">Loading...</div>
+            <div className="loading-bar"><div className="loading-bar-fill" style={{ width: '60%' }} /></div>
           </div>
         ) : (
-          <div className="project-grid">
-            {projects.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={index}
-                onSelect={setSelectedProject}
-              />
-            ))}
+          <div className="project-section" id="work">
+            <div className="project-header">
+              <h2 className="project-title">
+                <span className="highlight-heading">Selected</span> Works
+              </h2>
+              <p className="project-meta">{projects.length} Projects · Updated {new Date().getFullYear()}</p>
+            </div>
+
+            <div className="scattered-grid">
+              {projects.map((project) => (
+                <div
+                  key={project.id}
+                  className="image-card"
+                  onClick={() => setSelectedProject(project)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(project)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {project.images[0] ? (
+                    <img
+                      src={`https://lh3.googleusercontent.com/d/${project.images[0].id}=w400`}
+                      alt={project.name}
+                      loading="lazy"
+                    />
+                  ) : project.videos[0] ? (
+                    <div style={{ width: '100%', aspectRatio: '16/9', background: 'var(--color-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-paper)', fontSize: '48px', fontFamily: 'var(--font-swizzy)' }}>
+                      ▶
+                    </div>
+                  ) : (
+                    <div style={{ width: '100%', aspectRatio: '4/3', background: 'var(--color-mist)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px', fontFamily: 'var(--font-swizzy)' }}>
+                      {project.name.charAt(0)}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </section>
 
+      {/* Brand Strip */}
+      <section className="brand-strip">
+        <p className="caption">Trusted by the brands shaping culture</p>
+        <div className="brand-logos">
+          <span className="brand-logo">ATLAS WEAR</span>
+          <span className="brand-logo">LABEL EMUSE</span>
+          <span className="brand-logo">MARSHMELLO</span>
+          <span className="brand-logo">SOT FOREVER</span>
+          <span className="brand-logo">YES MA'AM</span>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="footer" id="contact">
+      <footer className="footer">
         <div>
-          <h2 className="footer-cta">
-            Let&apos;s make<br />something <em>play.</em>
-          </h2>
+          <h2 className="footer-cta">Let&apos;s make<br />something <span className="highlight-heading">play.</span></h2>
           <a href="mailto:hello@shivaji.dev" className="footer-link" style={{ marginTop: '20px', display: 'inline-block' }}>
             hello@shivaji.dev ↗
           </a>

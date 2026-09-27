@@ -1,30 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-
 export function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
-    <header className="header-bar">
-      <span className="header-location">Hyderabad, India</span>
-      <span className="header-brand">The Shivaji Portfolio</span>
-      <button
-        className="header-menu"
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
-      >
-        <span />
-        <span />
-        <span />
-      </button>
-      {menuOpen && (
-        <nav className="nav-links" style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--color-parchment)', borderBottom: '1px solid var(--color-ink-black)', flexDirection: 'column', padding: '20px' }}>
-          <a href="#work" onClick={() => setMenuOpen(false)}>Work</a>
-          <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
-        </nav>
-      )}
-    </header>
+    <nav className="nav-bar">
+      <div className="nav-links">
+        <a href="#work" className="nav-link">Home</a>
+        <a href="#work" className="nav-link">Work</a>
+        <a href="#about" className="nav-link">About</a>
+        <a href="#contact" className="nav-link">Contact</a>
+      </div>
+      <a href="#contact" className="nav-cta">
+        <span className="status-dot" />
+        Sign Up
+      </a>
+    </nav>
   );
 }
