@@ -1,27 +1,131 @@
-'use client'
-import { useCallback, useState } from 'react'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ExternalLink, Pause, Play, Volume2, VolumeX } from 'lucide-react'
-import { Header } from '../components/layout/Header'
-import { VinylRecord } from '../components/vinyl/VinylRecord'
-import { MusicPlayer } from '../components/music/MusicPlayer'
-import { ProjectModal } from '../components/sections/ProjectModal'
-import { projects } from '../data/projects'
-import { companies } from '../data/companies'
-import { education } from '../data/education'
-import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation'
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Header } from '../components/Header';
+import { ProjectCard } from '../components/ProjectCard';
+import { ProjectDetail } from '../components/ProjectDetail';
+import { StampSeal } from '../components/StampSeal';
+
+interface DriveFile {
+  id: string;
+  name: string;
+  type: 'image' | 'video' | 'other';
+}
+
+interface ProjectData {
+  id: string;
+  name: string;
+  files: DriveFile[];
+  images: DriveFile[];
+  videos: DriveFile[];
+}
 
 export default function Home() {
- const [selected, setSelected] = useState(0); const [open, setOpen] = useState<number | null>(null); const [playing, setPlaying] = useState(false); const [muted, setMuted] = useState(false)
- const previous = useCallback(() => setSelected(x => (x + projects.length - 1) % projects.length), []); const next = useCallback(() => setSelected(x => (x + 1) % projects.length), []); const togglePlay = useCallback(() => setPlaying(x => !x), []); const toggleMute = useCallback(() => setMuted(x => !x), []); const close = useCallback(() => setOpen(null), [])
- useKeyboardNavigation(projects.length, previous, next, () => setOpen(selected), close, toggleMute, togglePlay); const current = projects[selected]
- return <main><Header/>
-  <section className="hero" id="top"><div className="hero-copy"><p className="eyebrow">SIDE A · SELECTED WORKS</p><h1>Ideas worth<br/><em>playing twice.</em></h1><p className="intro">I’m Shivaji — an engineer designing intelligent products and curious interfaces.</p><a href="#work" className="text-link">Explore the collection <ArrowDown size={15}/></a></div>
-   <div className="console-wrap"><span className="sticker one">NOW PLAYING</span><span className="sticker two">EST. 2024</span><div className="console"><div className="console-top"><span>SHIVAJI'S</span><b>picture machine</b><i>◉ stereo</i></div><div className="screen"><div className="screen-noise"/><p>SELECTED PROJECT</p><h2>{current.title}</h2><small>{current.type}</small><div className="screen-art" style={{ background: current.color }}>{current.art}<span>—</span></div><div className="scan">0{selected + 1} / 04</div></div><div className="controls"><div className="dpad"><button onClick={previous} aria-label="Previous"><ArrowLeft/></button><button onClick={next} aria-label="Next"><ArrowRight/></button><button aria-label="Up"><ArrowUp/></button><button aria-label="Down"><ArrowDown/></button></div><button className="open-btn" onClick={() => setOpen(selected)}>OPEN<br/><span>↵</span></button><div className="ab"><button onClick={togglePlay}>{playing ? <Pause/> : <Play/>}</button><button onClick={toggleMute}>{muted ? <VolumeX/> : <Volume2/>}</button></div></div></div></div><div className="keyboard-note">← → EXPLORE &nbsp;&nbsp; ↑ ↓ CATEGORIES &nbsp;&nbsp; ENTER OPEN &nbsp;&nbsp; M MUTE</div></section>
-  <section className="marquee"><div>THINGS I’VE MADE <span>✦</span> THINGS I’VE MADE <span>✦</span> THINGS I’VE MADE <span>✦</span></div></section>
-  <section className="work section" id="work"><div className="section-heading"><p className="eyebrow">THE COLLECTION · 01—04</p><h2>Work that has<br/>a <em>soundtrack.</em></h2><p>Every project has a side, a story, and a little more to discover.</p></div><div className="albums">{projects.map((project, index) => <button className={`album ${index === selected ? 'selected' : ''}`} key={project.title} onClick={() => {setSelected(index); setOpen(index)}} style={{ '--album': project.color } as React.CSSProperties}><div className="album-art"><span>{project.art}</span><i>{project.title}</i></div><div className="album-info"><b>{project.title}</b><small>{project.type.split(' · ')[0]}</small></div></button>)}</div></section>
-  <section className="experience section" id="about"><div className="experience-copy"><p className="eyebrow">THE B-SIDES</p><h2>Currently &<br/>previously at</h2><p>A few places that shaped how I approach systems, stories, and the small details that make things delightful.</p></div><div className="company-stack">{companies.map((company, index) => <article key={company.name} className="company" style={{ '--c': company.color, '--r': `${index*2-3}deg` } as React.CSSProperties}><span className="company-num">0{index+1}</span><div className="company-mark">{company.name.slice(0,1)}</div><div><h3>{company.name}</h3><p>{company.description}</p></div><ExternalLink size={16}/></article>)}</div></section>
-  <section className="education section"><div className="section-heading"><p className="eyebrow">EDUCATION · PRESS TO FLIP</p><h2>Learned on<br/><em>both sides.</em></h2></div><div className="records">{education.map(item => <button className="record-card" key={item.degree}><VinylRecord color={item.color} playing={playing}/><span>{item.years}</span><b>{item.degree}</b><small>{item.school}</small></button>)}</div></section>
-  <section className="artwork-strip"><img src="/vinyl.png" alt="A close-up vinyl record artwork"/></section>
-  <section className="off-clock section"><div><p className="eyebrow">WHEN THE LAPTOP CLOSES</p><h2>Off the<br/><em>Clock.</em></h2></div><div className="hobbies"><article><div className="film">35<br/><span>MM</span></div><b>Movies</b><p>Frame by frame, usually in a dark theatre.</p></article><article><div className="ball">◒</div><b>Cricket</b><p>Sunday matches and improbable comebacks.</p></article><article><VinylRecord color="#df5c3e" small playing={playing}/><b>Music</b><p>Always looking for the next side A.</p></article></div></section>
-  <footer id="contact"><p>THE END? <span>NOT QUITE.</span></p><h2>Let’s make<br/>something <em>play.</em></h2><a href="mailto:hello@example.com">hello@shivaji.dev ↗</a><small>© 2024 SHIVAJI · MADE WITH INTENTION</small></footer><MusicPlayer project={current} playing={playing} muted={muted} onPlay={togglePlay} onMute={toggleMute}/>{open !== null && <ProjectModal project={projects[open]} onClose={close}/>}</main>
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProjects() {
+      try {
+        const res = await fetch('/api/drive');
+        const data = await res.json();
+        setProjects(data.projects || []);
+      } catch (e) {
+        console.error('Failed to load projects:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProjects();
+  }, []);
+
+  if (selectedProject) {
+    return (
+      <main>
+        <Header />
+        <div className="page-wrapper">
+          <ProjectDetail project={selectedProject} onClose={() => setSelectedProject(null)} />
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main>
+      <Header />
+
+      {/* Hero Banner */}
+      <section className="display-banner">
+        <h1>SHIVAJI</h1>
+        <p>Selected Works · {new Date().getFullYear()}</p>
+      </section>
+
+      {/* Bio Section */}
+      <section className="page-wrapper">
+        <div className="bio-section">
+          <div>
+            <p className="bio-text">
+              <span className="bio-dropcap">I</span>&apos;m an engineer designing intelligent products and curious interfaces. My work lives at the intersection of systems thinking and creative exploration — building things that feel both inevitable and surprising.
+            </p>
+            <p className="bio-text" style={{ marginTop: '20px' }}>
+              Currently exploring the space between AI and human creativity, always looking for the next interesting problem to solve.
+            </p>
+          </div>
+          <div>
+            <h2 className="bio-heading">
+              Creative Developer<br />Based in Hyderabad, India.
+            </h2>
+            <div style={{ marginTop: '24px' }}>
+              <StampSeal />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Work Section */}
+      <section className="page-wrapper" id="work">
+        <div style={{ textAlign: 'center', marginBottom: '43px' }}>
+          <h2 className="heading-lg">ALL WORK!</h2>
+          <p className="subheading" style={{ marginTop: '14px' }}>
+            A collection of projects, experiments, and collaborations.
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="project-grid">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="loading-skeleton" style={{ height: '300px' }} />
+            ))}
+          </div>
+        ) : (
+          <div className="project-grid">
+            {projects.map((project, index) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                index={index}
+                onSelect={setSelectedProject}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Footer */}
+      <footer className="footer" id="contact">
+        <div>
+          <h2 className="footer-cta">
+            Let&apos;s make<br />something <em>play.</em>
+          </h2>
+          <a href="mailto:hello@shivaji.dev" className="footer-link" style={{ marginTop: '20px', display: 'inline-block' }}>
+            hello@shivaji.dev ↗
+          </a>
+        </div>
+        <div className="footer-copy">
+          © {new Date().getFullYear()} SHIVAJI · MADE WITH INTENTION
+        </div>
+      </footer>
+    </main>
+  );
 }
